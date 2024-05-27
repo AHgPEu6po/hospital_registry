@@ -1,0 +1,325 @@
+@startuml
+
+!define RECTANGLE class
+
+' Головний клас
+RECTANGLE Main {
+  +void main(String[] args)
+  -void initializeUI()
+  -JButton createRoleButton(String role, String imagePath)
+  -ImageIcon createCircularIcon(String path)
+  -void styleButton(JButton button)
+  -void applyQualityRenderingHints(Graphics2D g2d)
+}
+
+package "Password Management" {
+    RECTANGLE PasswordAdmin {
+      -static String PASSWORD
+      +PasswordAdmin(JFrame parentWindow, boolean showDialog)
+      -void readPasswordFromFile()
+      -String readHelloFromFile()
+    }
+
+    RECTANGLE PasswordDoctor {
+      -static String ADRESSA
+      -static String PASSWORD
+      +PasswordDoctor(JFrame parentWindow, boolean showDialog)
+      -void readPasswordFromFile()
+    }
+
+    RECTANGLE PasswordPatient {
+      -static String ADRESSA
+      -static String PASSWORD
+      +PasswordPatient(JFrame parentFrame, boolean showDialog)
+      -void readPasswordFromFile()
+    }
+
+    RECTANGLE NewPatientPassword {
+      +NewPatientPassword()
+    }
+}
+
+package "Patient Management" {
+    RECTANGLE Patient {
+      -final String surname
+      -final String name
+      -final String fathername
+      -final String gender
+      -final String birthday
+      -final String id
+      +Patient(String surname, String name, String fathername, String gender, String birthday, String id)
+      +String getSurname()
+      +String getName()
+      +String getFathername()
+      +String getGender()
+      +String getBirthday()
+      +String getId()
+    }
+
+    RECTANGLE PatientController {
+      -static PatientWindow view
+      -final Patient patient
+      +PatientController(String patientLogin, Boolean visible)
+      -void initController()
+      -void handleViewData()
+      -void handleViewDoctorList()
+      -void handleViewAppointments()
+      -void handleViewHistory()
+      -void handleViewChangePassword()
+      +Patient getPatient()
+    }
+
+    RECTANGLE PatientWindow {
+      -final JButton dataButton
+      -final JButton doctorsButton
+      -final JButton appointmentsButton
+      -final JButton historyButton
+      -final JButton changePasswordButton
+      +PatientWindow(String patientName)
+      +JButton getDataButton()
+      +JButton getDoctorListButton()
+      +JButton getAppointmentsButton()
+      +JButton getHistoryButton()
+      +JButton getChangePasswordButton()
+    }
+
+    RECTANGLE PatientDataWindow {
+      +PatientDataWindow(Patient patient)
+    }
+
+    RECTANGLE PatientAppointmentsWindow {
+      -final JTable appointmentsTable
+      -final Patient patient
+      +PatientAppointmentsWindow(Patient patient)
+      -void loadPatientAppointments()
+      -CancelAppointmentButtonAction()
+      +void actionPerformed(ActionEvent e)
+      -void removeAppointmentFromFile(String day, String time, String doctorName)
+      -void updateDoctorTimetable(String day, String time, String doctorName)
+    }
+
+    RECTANGLE PatientHistoryWindow {
+      -final JTextArea historyTextArea
+      -final Patient patient
+      +PatientHistoryWindow(Patient patient, String role)
+      -void loadPatientHistory()
+      -void showAddRecordDialog()
+      -void addRecord(String recordText)
+    }
+
+    RECTANGLE PatientListController {
+      -final PatientListWindow view
+      -final JTable table
+      -final DefaultTableModel tableModel
+      -final String username
+      -final Map<String, Patient> patientMap
+      +PatientListController()
+      -void initController()
+      -void populateTableWithData(String query)
+      -void void deletePatient(Patient patient)
+    }
+
+    RECTANGLE PatientListWindow {
+      -JTable table
+      -final JTextField searchField
+      -final JButton searchButton
+      +PatientListWindow(JTable table)
+      +JTextField getSearchField()
+      +JButton getSearchButton()
+      +void updateTable(JTable table)
+    }
+}
+
+package "Doctor Management" {
+    RECTANGLE Doctor {
+      -final String surname
+      -final String name
+      -final String fathername
+      -final String gender
+      -final String job
+      -final String shift
+      +Doctor(String surname, String name, String fathername, String gender, String job, String shift)
+      +String getSurname()
+      +String getName()
+      +String getFathername()
+      +String getGender()
+      +String getJob()
+      +String getShift()
+    }
+
+    RECTANGLE DoctorController {
+      -static DoctorWindow view
+      -final Doctor doctor
+      +DoctorController(String doctorLogin, Boolean visible)
+      -void initController()
+      -void handleViewData()
+      -void handleViewTimetableList()
+      -void handleViewChangePassword()
+      +Doctor getDoctor()
+    }
+
+    RECTANGLE DoctorWindow {
+      -final JButton dataButton
+      -final JButton timetableButton
+      -final JButton changePasswordButton
+      +DoctorWindow(String doctorName)
+      +JButton getDataButton()
+      +JButton getTimetableButton()
+      +JButton getChangePasswordButton()
+    }
+
+    RECTANGLE DoctorDataWindow {
+      +DoctorDataWindow(Doctor doctor)
+    }
+
+    RECTANGLE DoctorTimetableWindow {
+      -final JButton[][] scheduleButtons
+      -final Doctor doctor
+      -final String role
+      -static Patient patient
+      +DoctorTimetableWindow(Doctor doctor, String role, String username)
+      -void loadDoctorTimetable()
+      -void showRecordInfo(String day, String time, String text)
+      -void showPatientRecordInfo(String day, String time, String text, JButton button)
+      -void showAddAppointment(String day, String time, JButton button)
+      -void addAppointment(String day, String time)
+      -void updateDoctorTimetable(String day, String time, JButton button)
+    }
+
+    RECTANGLE DoctorListController {
+      -final DoctorListWindow view
+      -final JTable table
+      -final DefaultTableModel tableModel
+      -final String role
+      -final String username
+      -final Map<String, Doctor> doctorMap
+      +DoctorListController(String role, String username)
+      -void initController()
+      -void populateTableWithData(String query, String searchType)
+      -void deleteDoctor(Doctor doctor)
+      -void deleteDirectory(File directory)
+    }
+
+    RECTANGLE DoctorListWindow {
+      -JTable table
+      -final JTextField searchField
+      -final JButton searchButton
+      -final JComboBox<String>  searchTypeComboBox
+      +DoctorListWindow(JTable table)
+      +JTextField getSearchField()
+      +JButton getSearchButton()
+      +String getSearchType()
+      +void updateTable(JTable table)
+    }
+}
+
+package "Admin Management" {
+    RECTANGLE AdminController {
+      -final AdminWindow view
+      +AdminController()
+      -void initController()
+      -void handleViewDoctorList()
+      -void handleViewAddDoctor()
+      -void handleViewPatientList()
+      -void handleViewAddPatient()
+      -void handleViewChangeHello()
+      -void handleViewChangePassword()
+    }
+
+    RECTANGLE AdminWindow {
+      -final JButton doctorsButton
+      -final JButton addDoctorButton
+      -final JButton patientsButton
+      -final JButton addPatientButton
+      -final JButton changeHelloButton
+      -final JButton changePasswordButton
+      +AdminWindow()
+      +JButton getDoctorListButton()
+      +JButton getAddDoctorButton()
+      +JButton getPatientListButton()
+      +JButton getAddPatientButton()
+      +JButton getChangeHelloButton()
+      +JButton getChangePasswordButton()
+    }
+
+    RECTANGLE ChangeHelloWindow {
+      +ChangeHelloWindow()
+    }
+
+    RECTANGLE AddDoctorWindow {
+      +AddDoctorWindow()
+    }
+
+    RECTANGLE AddPatientWindow {
+      +AddPatientWindow()
+    }
+}
+
+package "Password Change" {
+    RECTANGLE ChangePasswordController {
+      -final ChangePasswordWindow view
+      -final Object user
+      +ChangePasswordController(Object user)
+      -void initController()
+      -void handleChangePassword()
+    }
+
+    RECTANGLE ChangePasswordWindow {
+      -final JButton changeButton
+      -final JTextField oldPasswordField
+      -final JTextField newPasswordField
+      -final JPasswordField repitPasswordField
+      +ChangePasswordWindow()
+      +JButton getChangeButton()
+      +JTextField getOldPasswordField()
+      +JTextField getNewPasswordField()
+      +JPasswordField getRepitPasswordField()
+    }
+}
+
+Main -> PasswordAdmin : uses
+Main -> PasswordDoctor : uses
+Main -> PasswordPatient : uses
+
+PasswordAdmin -> AdminController : realSubject
+PasswordDoctor -> DoctorController : realSubject
+PasswordPatient -> PatientController : realSubject
+PasswordPatient -> NewPatientPassword : opens
+
+PatientController -> Patient : contains
+PatientController -> PatientWindow : controls
+PatientController -> PatientDataWindow : opens
+PatientController -> DoctorListController : uses
+PatientController -> PatientAppointmentsWindow : opens
+PatientController -> PatientHistoryWindow : opens
+PatientController -> ChangePasswordController : uses
+
+PatientDataWindow --> Patient : displays
+PatientAppointmentsWindow --> Patient : displays
+PatientHistoryWindow --> Patient : displays
+
+DoctorController -> Doctor : contains
+DoctorController -> DoctorWindow : controls
+DoctorController -> DoctorDataWindow : opens
+DoctorController -> DoctorTimetableWindow : opens
+DoctorController -> ChangePasswordController : uses
+
+DoctorWindow -> Doctor : contains
+DoctorDataWindow -> Doctor : displays
+DoctorTimetableWindow -> Doctor : displays
+DoctorTimetableWindow -> Patient : interacts
+
+AdminController -> AdminWindow : controls
+AdminController -> DoctorListController : uses
+AdminController -> AddDoctorWindow : opens
+AdminController -> PatientListController : uses
+AdminController -> AddPatientWindow : opens
+AdminController -> ChangeHelloWindow : opens
+AdminController -> ChangePasswordController : uses
+
+DoctorListController -> DoctorListWindow : controls
+PatientListController -> PatientListWindow : controls
+
+ChangePasswordController -> ChangePasswordWindow : controls
+
+@enduml
